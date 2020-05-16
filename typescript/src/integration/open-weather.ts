@@ -21,7 +21,7 @@ export class OpenWeather {
 
     private getCityList(): CityListEntry[] {
         if (!this.cityList.length) {
-            this.cityList = JSON.parse(fs.readFileSync(`${__dirname}/../../city-list.json`).toString());
+            this.cityList = JSON.parse(fs.readFileSync(`${__dirname}/../../../city-list.json`).toString());
         }
         return this.cityList;
     }
