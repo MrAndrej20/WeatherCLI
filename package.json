@@ -1,0 +1,31 @@
+{
+    "name": "open-weather-cli",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "build": "./node_modules/.bin/tsc --p .",
+        "prebuild": "rm -rf ./dst",
+        "postbuild": "npm run lint",
+        "lint": "npm run tslint && npm run eslint",
+        "tslint": "./node_modules/.bin/tslint -p ./tsconfig.json -c ./tslint.json",
+        "eslint": "./node_modules/.bin/eslint src/  --ext .ts --quiet --cache"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/node": "^10.15.x",
+        "@typescript-eslint/eslint-plugin": "^2.31.0",
+        "@typescript-eslint/parser": "^2.31.0",
+        "babel-eslint": "^10.1.0",
+        "eslint": "^6.8.0",
+        "eslint-config-airbnb-base": "^14.1.0",
+        "eslint-plugin-import": "^2.20.2",
+        "tslint": "^5.11.0",
+        "typescript": "^3.8.3"
+    },
+    "dependencies": {
+        "ajv": "^6.12.2",
+        "got": "^11.1.1"
+    }
+}
