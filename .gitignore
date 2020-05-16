@@ -2,3 +2,4 @@ dst
 node_modules
 .eslintcache
 package-lock.json
+*.config

@@ -17,10 +17,10 @@ export type TemperatureUnit = "metric" | "imperial";
 export class OpenWeather {
     private readonly baseUrl = "https://api.openweathermap.org/data/2.5";
     private readonly appId = "84c646a7cac391335fc2615712ec3e40";
-    private cityList: CityListEntry[] = [];
+    private cityList: CityListEntry[];
 
     private getCityList(): CityListEntry[] {
-        if (!this.cityList.length) {
+        if (!this.cityList) {
             this.cityList = JSON.parse(fs.readFileSync(`${__dirname}/../../../city-list.json`).toString());
         }
         return this.cityList;
