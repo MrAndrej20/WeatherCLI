@@ -2,30 +2,3 @@
 
 
 require('../dst/index.js').commandLineInterface();
-// const initArgv = process.argv;
-// process.argv = [...initArgv, "-c", "skopje", "-t", "f"];
-// require('../dst/index.js').commandLineInterface()
-//     .then(() => {
-//         console.log("NEW ITERATION");
-//         console.log("===================================");
-//         process.argv = [...initArgv, "-c", "skopje", "-t", "c"];
-//         return require('../dst/index.js').commandLineInterface();
-//     })
-//     .then(() => {
-//         console.log("NEW ITERATION");
-//         console.log("===================================");
-//         process.argv = [...initArgv, "--city", "skopje", "-t", "c"];
-//         return require('../dst/index.js').commandLineInterface();
-//     })
-//     .then(() => {
-//         console.log("NEW ITERATION");
-//         console.log("===================================");
-//         process.argv = [...initArgv, "-z", "1000,Skopje"];
-//         return require('../dst/index.js').commandLineInterface();
-//     })
-//     .then(() => {
-//         console.log("NEW ITERATION");
-//         console.log("===================================");
-//         process.argv = [...initArgv, "-l"];
-//         return require('../dst/index.js').commandLineInterface();
-//     });

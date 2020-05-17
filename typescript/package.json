@@ -4,12 +4,12 @@
     "description": "",
     "main": "dst/index.js",
     "scripts": {
+        "start": "./bin/open-weather-cli",
         "build": "./node_modules/.bin/tsc --p .",
         "prebuild": "rm -rf ./dst",
         "postbuild": "npm run lint",
-        "lint": "npm run tslint && npm run eslint",
-        "tslint": "./node_modules/.bin/tslint -p ./tsconfig.json -c ./tslint.json",
-        "eslint": "./node_modules/.bin/eslint src/  --ext .ts --quiet --cache"
+        "lint": "npm run tslint",
+        "tslint": "./node_modules/.bin/tslint -p ./tsconfig.json -c ./tslint.json"
     },
     "author": "",
     "license": "ISC",
