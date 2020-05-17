@@ -76,60 +76,25 @@
 		"ordered-imports": true,
 		"typedef": true,
 		"no-magic-numbers": true,
-		"arrow-parens": [
-			true,
-			"ban-single-arg-parens"
-		],
-		"max-classes-per-file": [
-			true,
-			2
-		],
-		"object-literal-key-quotes": [
-			true,
-			"as-needed"
-		],
-		"only-arrow-functions": [
-			true,
-			"allow-declarations",
-			"allow-named-functions"
-		],
-		"variable-name": [
-			true,
-			"ban-keywords",
-			"check-format",
-			"allow-leading-underscore"
-		],
+		"arrow-parens": [true, "ban-single-arg-parens"],
+		"max-classes-per-file": [true, 2],
+		"object-literal-key-quotes": [true, "as-needed"],
+		"only-arrow-functions": [true, "allow-declarations", "allow-named-functions"],
+		"variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
 		"one-variable-per-declaration": true,
-		"one-line": [
-			true,
-			"check-catch",
-			"check-finally",
-			"check-else"
-		],
+		"one-line": [true, "check-catch", "check-finally", "check-else"],
 		"no-trailing-whitespace": true,
 		"no-string-literal": true,
 		"adjacent-overload-signatures": true,
 		"callable-types": true,
-		"comment-format": [
-			true,
-			"check-space"
-		],
+		"comment-format": [true, "check-space"],
 		"forin": true,
 		"import-spacing": true,
 		"indent": true,
 		"interface-over-type-literal": true,
 		"label-position": true,
-		"max-line-length": [
-			true,
-			{
-				"limit": 150,
-				"ignore-pattern": "^import |^export {(.*?)}"
-			}
-		],
-		"member-ordering": [
-			true,
-			"statics-first"
-		],
+		"max-line-length": [true, {"limit": 150, "ignore-pattern": "^import |^export {(.*?)}"}],
+		"member-ordering": [true, "statics-first"],
 		"new-parens": true,
 		"no-arg": true,
 		"no-bitwise": true,

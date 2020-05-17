@@ -4,6 +4,8 @@ import path from "path";
 import { IPApi, OpenWeather, TemperatureUnit } from "../integration";
 import { CLI } from "./cli-manager";
 
+const MAXIMUM_CITIES_PER_IMPORT_FILE = 10;
+
 interface Options {
     c?: string;
     z?: string;
@@ -113,6 +115,12 @@ export class WeatherManager {
         const filePath = fileLocation.startsWith("/") ? fileLocation : path.resolve(pwd, fileLocation);
         try {
             const cityNames = fs.readFileSync(filePath).toString().split("\n");
+            if (cityNames.length > MAXIMUM_CITIES_PER_IMPORT_FILE) {
+                throw [
+                    "Limit Exceeded",
+                    "Maximum of 10 Cities per import"
+                ].join("\n");
+            }
             const weather = await this.openWeather.getCurrentWeatherMultipleCities(cityNames, "metric");
             return weather;
         } catch (err) {
