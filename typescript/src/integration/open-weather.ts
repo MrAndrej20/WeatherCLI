@@ -1,5 +1,7 @@
 import fs from "fs";
 import request from "got";
+import path from "path";
+import { formattedMessage, isGotError } from "../lib";
 
 interface CityListEntry {
     id: number;
@@ -12,6 +14,13 @@ interface CityListEntry {
     };
 }
 
+interface WeatherMessage {
+    city: string;
+    temp: number;
+    humidity: number;
+    weather: string;
+}
+
 export type TemperatureUnit = "metric" | "imperial";
 
 export class OpenWeather {
@@ -21,16 +30,26 @@ export class OpenWeather {
 
     private getCityList(): CityListEntry[] {
         if (!this.cityList) {
-            this.cityList = JSON.parse(fs.readFileSync(`${__dirname}/../../../city-list.json`).toString());
+            const filePath = path.resolve(`${__dirname}/../../city-list.json`);
+            this.cityList = JSON.parse(fs.readFileSync(filePath).toString());
         }
         return this.cityList;
+    }
+
+    private weatherMessage({ city, temp, humidity, weather }: WeatherMessage) {
+        return formattedMessage(
+            `City: ${city}`,
+            `Temperature is: ${temp}`,
+            `Humidity is: ${humidity}`,
+            `Weather is: ${weather}`
+        );
     }
 
     async getCurrentWeatherMultipleCities(cityNames: string[], temperatureUnit: TemperatureUnit): Promise<string> {
         const cityIds = cityNames.map(cityName => {
             const city = this.getCityList().find(cl => cl.name.toLowerCase() === cityName.toLowerCase());
             if (!city) {
-                throw [`City ${cityName} doesn't exist`].join("\n");
+                throw formattedMessage(`City ${cityName} doesn't exist`);
             }
             return city.id;
         });
@@ -41,48 +60,57 @@ export class OpenWeather {
         ].join("&");
 
         try {
-            const response = await request(`${this.baseUrl}/group?${qs}`);
-            const body = JSON.parse(response.body) as OpenWeather.GroupWeatherResponse;
+            const { body } = await request<OpenWeather.GroupWeatherResponse>(`${this.baseUrl}/group?${qs}`, {
+                responseType: "json"
+            });
             if (!body.list.length) {
-                throw [`Could not get weather for ${cityNames.join()}`].join("\n");
+                throw formattedMessage(`Could not get weather for ${cityNames.join(", ")}`);
             }
-            return body.list.map(weather =>
-                [
-                    `City: ${weather.name}`,
-                    `Temperature is: ${weather.main.temp}`,
-                    `Humidity is: ${weather.main.humidity}`,
-                    `Weather is: ${weather.weather.map(w => w.description).join()}`,
-                ].join("\n")
-            ).join("\n");
+            return formattedMessage(
+                ...body.list.map(city => this.weatherMessage({
+                    city: city.name,
+                    temp: city.main.temp,
+                    humidity: city.main.humidity,
+                    weather: city.weather.map(w => w.description).join(", ")
+                }))
+            );
         } catch (err) {
+            if (isGotError(err)) {
+                throw formattedMessage(`Could not get weather for ${cityNames.join(", ")}`);
+            }
             throw err;
         }
     }
 
-    async getCurrentWeatherByCity(city: string, temperatureUnit: TemperatureUnit): Promise<string> {
+    async getCurrentWeatherByCity(cityName: string, temperatureUnit: TemperatureUnit): Promise<string> {
         const qs = [
-            `q=${encodeURIComponent(city)}`,
+            `q=${encodeURIComponent(cityName)}`,
             `units=${encodeURIComponent(temperatureUnit)}`,
             `appid=${encodeURIComponent(this.appId)}`,
         ].join("&");
 
         try {
-            const response = await request(`${this.baseUrl}/find?${qs}`);
-            const body = JSON.parse(response.body) as OpenWeather.FindWeatherResponse;
+            const { body } = await request<OpenWeather.FindWeatherResponse>(`${this.baseUrl}/find?${qs}`, {
+                responseType: "json"
+            });
             if (!body.list.length) {
-                throw [`Could not get weather for ${city}`].join("\n");
+                throw formattedMessage(`Could not get weather for ${cityName}`);
             }
-            const weather = body.list[0];
-            return [
-                `City: ${weather.name}`,
-                `Temperature is: ${weather.main.temp}`,
-                `Humidity is: ${weather.main.humidity}`,
-                `Weather is: ${weather.weather.map(w => w.description).join()}`,
-            ].join("\n");
+            const city = body.list[0];
+            return this.weatherMessage({
+                city: city.name,
+                temp: city.main.temp,
+                humidity: city.main.humidity,
+                weather: city.weather.map(w => w.description).join(", ")
+            });
         } catch (err) {
+            if (isGotError(err)) {
+                throw formattedMessage(`Could not get weather for ${cityName}`);
+            }
             throw err;
         }
     }
+
     async getCurrentWeatherByZipCode(zipCode: string, temperatureUnit: TemperatureUnit): Promise<string> {
         const qs = [
             `zip=${encodeURIComponent(zipCode)}`,
@@ -91,15 +119,19 @@ export class OpenWeather {
         ].join("&");
 
         try {
-            const response = await request(`${this.baseUrl}/weather?${qs}`);
-            const body = JSON.parse(response.body) as OpenWeather.CurrentWeatherResponse;
-            return [
-                `City: ${body.name}`,
-                `Temperature is: ${body.main.temp}`,
-                `Humidity is: ${body.main.humidity}`,
-                `Weather is: ${body.weather.map(w => w.description).join()}`,
-            ].join("\n");
+            const { body: city } = await request<OpenWeather.CurrentWeatherResponse>(`${this.baseUrl}/weather?${qs}`, {
+                responseType: "json"
+            });
+            return this.weatherMessage({
+                city: city.name,
+                temp: city.main.temp,
+                humidity: city.main.humidity,
+                weather: city.weather.map(w => w.description).join(", ")
+            });
         } catch (err) {
+            if (isGotError(err)) {
+                throw formattedMessage(`Could not get weather for ${zipCode}`);
+            }
             throw err;
         }
     }

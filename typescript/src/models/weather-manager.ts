@@ -2,6 +2,7 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 import { IPApi, OpenWeather, TemperatureUnit } from "../integration";
+import { formattedMessage } from "../lib";
 import { CLI } from "./cli-manager";
 
 const MAXIMUM_CITIES_PER_IMPORT_FILE = 10;
@@ -34,7 +35,7 @@ export class WeatherManager {
             case commandArguments.includes("-c"): return { ...options, c: this.extractFlagValue(commandArguments, "-c") };
             case commandArguments.includes("--city"): return { ...options, c: this.extractFlagValue(commandArguments, "--city") };
             case commandArguments.includes("-z"): return { ...options, z: this.extractFlagValue(commandArguments, "-z") };
-            default: throw ["Could not serialize Options"].join("\n");
+            default: throw formattedMessage("Could not serialize Options");
         }
     }
 
@@ -54,9 +55,9 @@ export class WeatherManager {
             return this.deserializeOptions(options);
         } catch (err) {
             if (err && err.code === "ENOENT") {
-                throw ["No previous queries!"].join("\n");
+                throw formattedMessage("No previous queries!");
             }
-            throw ["Invalid config file"].join("\n");
+            throw formattedMessage("Invalid config file");
         }
     }
 
@@ -64,7 +65,7 @@ export class WeatherManager {
         const flagPosition = commandArguments.indexOf(flag);
         const flagValue = commandArguments[flagPosition + 1];
         if (!flagValue) {
-            throw [`${flag} flag with no Value`].join("\n");
+            throw formattedMessage(`${flag} flag with no Value`);
         }
         return flagValue;
     }
@@ -86,8 +87,10 @@ export class WeatherManager {
                 const zipCode = this.extractFlagValue(commandArguments, "-z");
                 return this.openWeather.getCurrentWeatherByZipCode(zipCode, temperature);
             }
+            default: {
+                return undefined;
+            }
         }
-        return undefined;
     }
 
     private getTemperature(commandArguments: string[]): TemperatureUnit {
@@ -96,10 +99,10 @@ export class WeatherManager {
         }
         const unCheckedTemperature = this.extractFlagValue(commandArguments, "-t");
         if (unCheckedTemperature !== "f" && unCheckedTemperature !== "c") {
-            throw [
+            throw formattedMessage(
                 `Invalid Temperature Unit '${unCheckedTemperature}'`,
                 "Valid values are 'f' and 'c'"
-            ].join("\n");
+            );
         }
         return unCheckedTemperature === "c" ? "metric" : "imperial";
     }
@@ -116,16 +119,16 @@ export class WeatherManager {
         try {
             const cityNames = fs.readFileSync(filePath).toString().split("\n");
             if (cityNames.length > MAXIMUM_CITIES_PER_IMPORT_FILE) {
-                throw [
+                throw formattedMessage(
                     "Limit Exceeded",
                     "Maximum of 10 Cities per import"
-                ].join("\n");
+                );
             }
             const weather = await this.openWeather.getCurrentWeatherMultipleCities(cityNames, "metric");
             return weather;
         } catch (err) {
             if (err && err.code === "ENOENT") {
-                throw ["File doesn't exist!"].join("\n");
+                throw formattedMessage("File doesn't exist!");
             }
             throw err;
         }

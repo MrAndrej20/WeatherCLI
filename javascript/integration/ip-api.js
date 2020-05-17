@@ -1,4 +1,5 @@
 const request = require('got');
+const { formattedMessage } = require("../lib");
 
 exports.IPApi = class IPApi {
     constructor() {
@@ -7,11 +8,12 @@ exports.IPApi = class IPApi {
 
     async getCity() {
         try {
-            const response = await request(`${this.baseUrl}/json?fields=city`);
-            const { city } = JSON.parse(response.body);
+            const { body: { city } } = await request(`${this.baseUrl}/json?fields=city`, {
+                responseType: "json"
+            });
             return city;
         } catch (err) {
-            throw ['Could not get Geo Location'].join('\n');
+            throw formattedMessage('Could not get Geo Location');
         }
     }
 };

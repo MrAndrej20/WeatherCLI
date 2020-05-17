@@ -1,10 +1,9 @@
 import { ReadLine } from "readline";
 
 interface Prompt {
-
+    action: Function;
     question: string;
     suggestion?: string;
-    action?: Function;
 }
 
 export class CLI {
