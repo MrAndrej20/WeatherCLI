@@ -21,7 +21,7 @@ interface Options {
  */
 export class WeatherManager {
 
-    private static readonly configDir = `${os.homedir()}/.open-weather-cli-config`;
+    private static readonly configDir = `${os.homedir()}/.weather-cli-config`;
 
     private readonly openWeather: OpenWeather;
 

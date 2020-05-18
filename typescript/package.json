@@ -1,13 +1,13 @@
 {
-    "name": "open-weather-cli",
+    "name": "weather-cli",
     "version": "1.0.0",
     "description": "CLI Tool for getting weather data",
     "bin": {
-        "openweather": "./bin/open-weather-cli"
+        "weather": "./bin/weather-cli"
     },
     "main": "dst/index.js",
     "scripts": {
-        "start": "./bin/open-weather-cli",
+        "start": "./bin/weather-cli",
         "prestart": "npm run build",
         "build": "./node_modules/.bin/tsc --p .",
         "prebuild": "rm -rf ./dst",

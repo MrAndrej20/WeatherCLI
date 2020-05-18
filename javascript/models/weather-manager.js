@@ -6,7 +6,7 @@ const { formattedMessage } = require('../lib');
 const { OpenWeather } = require('../integration/open-weather');
 
 const MAXIMUM_CITIES_PER_IMPORT_FILE = 10;
-const CONFIG_DIR = `${os.homedir()}/.open-weather-cli-config`;
+const CONFIG_DIR = `${os.homedir()}/.weather-cli-config`;
 
 /**
  *  Contains logic for managing the user input, prompting the user and sending messages

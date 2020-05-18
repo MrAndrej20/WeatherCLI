@@ -59,7 +59,7 @@ export class OpenWeather {
      */
     private getCityList(): CityListEntry[] {
         if (!this.cityList) {
-            const filePath = path.resolve(`${__dirname}/../../city-list.json`);
+            const filePath = path.resolve(`${__dirname}/../../../city-list.json`);
             this.cityList = JSON.parse(fs.readFileSync(filePath).toString());
         }
         return this.cityList;
