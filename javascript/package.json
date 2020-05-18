@@ -5,6 +5,7 @@
     "main": "dst/index.js",
     "scripts": {
         "start": "./bin/open-weather-cli",
+        "prestart": "npm run lint",
         "lint": "npm run eslint",
         "eslint": "./node_modules/.bin/eslint .  --ext .js --quiet --cache"
     },

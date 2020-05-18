@@ -7,8 +7,8 @@
  * @returns {string}
  */
 exports.formattedMessage = function formattedMessage(...messages) {
-    return messages.join("\n");
-}
+    return messages.join('\n');
+};
 
 /**
  * Typeguard for checking if an error object is of type GotError
@@ -19,4 +19,4 @@ exports.formattedMessage = function formattedMessage(...messages) {
  */
 exports.isGotError = function isGotError(error) {
     return !!error.name;
-}
+};

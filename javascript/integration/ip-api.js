@@ -1,5 +1,5 @@
 const request = require('got');
-const { formattedMessage } = require("../lib");
+const { formattedMessage } = require('../lib');
 
 /**
  * Class for integrating with ip-api.com
@@ -22,7 +22,7 @@ exports.IPApi = class IPApi {
     async getCity() {
         try {
             const { body: { city } } = await request(`${this.baseUrl}/json?fields=city`, {
-                responseType: "json"
+                responseType: 'json'
             });
             return city;
         } catch (err) {

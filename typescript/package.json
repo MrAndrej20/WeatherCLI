@@ -5,6 +5,7 @@
     "main": "dst/index.js",
     "scripts": {
         "start": "./bin/open-weather-cli",
+        "prestart": "npm run build",
         "build": "./node_modules/.bin/tsc --p .",
         "prebuild": "rm -rf ./dst",
         "postbuild": "npm run lint",

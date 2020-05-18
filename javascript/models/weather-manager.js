@@ -2,7 +2,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { IPApi } = require('../integration/ip-api');
-const { formattedMessage } = require("../lib");
+const { formattedMessage } = require('../lib');
 const { OpenWeather } = require('../integration/open-weather');
 
 const MAXIMUM_CITIES_PER_IMPORT_FILE = 10;

@@ -1,7 +1,7 @@
 const fs = require('fs');
-const path = require("path");
+const path = require('path');
 const request = require('got');
-const { formattedMessage, isGotError } = require("../lib");
+const { formattedMessage, isGotError } = require('../lib');
 
 
 /**
@@ -38,7 +38,7 @@ exports.OpenWeather = class OpenWeather {
     }
 
     /**
-     * Creates a standardized "Weather Message"
+     * Creates a standardized 'Weather Message'
      *
      * @param {Object} { city, temp, humidity, weather }
      * @returns {string}
@@ -57,7 +57,7 @@ exports.OpenWeather = class OpenWeather {
      * Returns current weather for multiple cities by city names
      *
      * @param {string[]} cityNames
-     * @param {"metric"|"imperial"} temperatureUnit
+     * @param {'metric'|'imperial'} temperatureUnit
      * @returns {Promise<string>}
      * @memberof OpenWeather
      */
@@ -76,22 +76,22 @@ exports.OpenWeather = class OpenWeather {
         ].join('&');
         try {
             const { body } = await request(`${this.baseUrl}/group?${qs}`, {
-                responseType: "json"
+                responseType: 'json'
             });
             if (!body.list.length) {
                 throw formattedMessage(`Could not get weather for ${cityNames.join()}`);
             }
             return formattedMessage(
-                ...body.list.map(city => this.weatherMessage({
+                ...body.list.map((city) => this.weatherMessage({
                     city: city.name,
                     temp: city.main.temp,
                     humidity: city.main.humidity,
-                    weather: city.weather.map(w => w.description).join(", ")
+                    weather: city.weather.map((w) => w.description).join(', ')
                 }))
             );
         } catch (err) {
             if (isGotError(err)) {
-                throw formattedMessage(`Could not get weather for ${cityNames.join(", ")}`);
+                throw formattedMessage(`Could not get weather for ${cityNames.join(', ')}`);
             }
             throw err;
         }
@@ -101,30 +101,30 @@ exports.OpenWeather = class OpenWeather {
      * Returns current weather by city name
      *
      * @param {string} cityName
-     * @param {"metric"|"imperial"} temperatureUnit
+     * @param {'metric'|'imperial'} temperatureUnit
      * @returns {Promise<string>}
      * @memberof OpenWeather
      */
-    async getCurrentWeatherByCity(city, temperatureUnit) {
+    async getCurrentWeatherByCity(cityName, temperatureUnit) {
         const qs = [
-            `q=${encodeURIComponent(city)}`,
+            `q=${encodeURIComponent(cityName)}`,
             `units=${encodeURIComponent(temperatureUnit)}`,
             `appid=${encodeURIComponent(this.appId)}`
         ].join('&');
 
         try {
             const { body } = await request(`${this.baseUrl}/find?${qs}`, {
-                responseType: "json"
+                responseType: 'json'
             });
             if (!body.list.length) {
-                throw formattedMessage(`Could not get weather for ${city}`);
+                throw formattedMessage(`Could not get weather for ${cityName}`);
             }
             const city = body.list[0];
             return this.weatherMessage({
                 city: city.name,
                 temp: city.main.temp,
                 humidity: city.main.humidity,
-                weather: city.weather.map(w => w.description).join(", ")
+                weather: city.weather.map((w) => w.description).join(', ')
             });
         } catch (err) {
             if (isGotError(err)) {
@@ -138,7 +138,7 @@ exports.OpenWeather = class OpenWeather {
      * Returns current weather by zip code
      *
      * @param {string} zipCode
-     * @param {"metric"|"imperial"} temperatureUnit
+     * @param {'metric'|'imperial'} temperatureUnit
      * @returns {Promise<string>}
      * @memberof OpenWeather
      */
@@ -150,13 +150,13 @@ exports.OpenWeather = class OpenWeather {
         ].join('&');
         try {
             const { body: city } = await request(`${this.baseUrl}/weather?${qs}`, {
-                responseType: "json"
+                responseType: 'json'
             });
             return this.weatherMessage({
                 city: city.name,
                 temp: city.main.temp,
                 humidity: city.main.humidity,
-                weather: city.weather.map(w => w.description).join(", ")
+                weather: city.weather.map((w) => w.description).join(', ')
             });
         } catch (err) {
             if (isGotError(err)) {
