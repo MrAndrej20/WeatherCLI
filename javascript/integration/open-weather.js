@@ -4,13 +4,31 @@ const request = require('got');
 const { formattedMessage, isGotError } = require("../lib");
 
 
+/**
+ * Class for integrating with Open Weather
+ * https://openweathermap.org/
+ *
+ * @exports
+ * @class OpenWeather
+ */
 exports.OpenWeather = class OpenWeather {
+
+    /**
+     * Creates an instance of OpenWeather.
+     * @memberof OpenWeather
+     */
     constructor() {
         this.baseUrl = 'https://api.openweathermap.org/data/2.5';
         this.appId = '84c646a7cac391335fc2615712ec3e40';
 
     }
 
+    /**
+     * Returns a City List with containing each city in Open Weather database with their metadata
+     *
+     * @returns {Object[]}
+     * @memberof OpenWeather
+     */
     getCityList() {
         if (!this.cityList) {
             const filePath = path.resolve(`${__dirname}/../../city-list.json`);
@@ -19,6 +37,13 @@ exports.OpenWeather = class OpenWeather {
         return this.cityList;
     }
 
+    /**
+     * Creates a standardized "Weather Message"
+     *
+     * @param {Object} { city, temp, humidity, weather }
+     * @returns {string}
+     * @memberof OpenWeather
+     */
     weatherMessage({ city, temp, humidity, weather }) {
         return formattedMessage(
             `City: ${city}`,
@@ -28,6 +53,14 @@ exports.OpenWeather = class OpenWeather {
         );
     }
 
+    /**
+     * Returns current weather for multiple cities by city names
+     *
+     * @param {string[]} cityNames
+     * @param {"metric"|"imperial"} temperatureUnit
+     * @returns {Promise<string>}
+     * @memberof OpenWeather
+     */
     async getCurrentWeatherMultipleCities(cityNames, temperatureUnit) {
         const cityIds = cityNames.map((cityName) => {
             const city = this.getCityList().find((cl) => cl.name.toLowerCase() === cityName.toLowerCase());
@@ -64,6 +97,14 @@ exports.OpenWeather = class OpenWeather {
         }
     }
 
+    /**
+     * Returns current weather by city name
+     *
+     * @param {string} cityName
+     * @param {"metric"|"imperial"} temperatureUnit
+     * @returns {Promise<string>}
+     * @memberof OpenWeather
+     */
     async getCurrentWeatherByCity(city, temperatureUnit) {
         const qs = [
             `q=${encodeURIComponent(city)}`,
@@ -93,6 +134,14 @@ exports.OpenWeather = class OpenWeather {
         }
     }
 
+    /**
+     * Returns current weather by zip code
+     *
+     * @param {string} zipCode
+     * @param {"metric"|"imperial"} temperatureUnit
+     * @returns {Promise<string>}
+     * @memberof OpenWeather
+     */
     async getCurrentWeatherByZipCode(zipCode, temperatureUnit) {
         const qs = [
             `zip=${encodeURIComponent(zipCode)}`,

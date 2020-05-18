@@ -1,9 +1,22 @@
 import request from "got";
 import { formattedMessage } from "../lib";
 
+/**
+ * Class for integrating with ip-api.com
+ * https://ip-api.com/
+ *
+ * @export
+ * @class IPApi
+ */
 export class IPApi {
     private readonly baseUrl = "http://ip-api.com";
 
+    /**
+     * Sends a request towards IPApi to get city from geolocation
+     *
+     * @returns {Promise<string>}
+     * @memberof IPApi
+     */
     async getCity(): Promise<string> {
         try {
             const { body: { city } } = await request<IPApi.GetLocationResponse>(`${this.baseUrl}/json?fields=city`, {
@@ -16,8 +29,18 @@ export class IPApi {
     }
 }
 
+/**
+ * Namespace of all IPApi responses
+ *
+ */
 namespace IPApi {
 
+    /**
+     * Response Body from Get Location Request
+     *
+     * @export
+     * @interface GetLocationResponse
+     */
     export interface GetLocationResponse {
         query: string;
         status: string;

@@ -1,5 +1,5 @@
 import readline from "readline";
-import { CLI } from "./models/cli-manager";
+import { CLIManager } from "./models/cli-manager";
 import { WeatherManager } from "./models/weather-manager";
 
 const rl = readline.createInterface({
@@ -8,7 +8,7 @@ const rl = readline.createInterface({
 });
 
 export async function commandLineInterface() {
-    const cli = new CLI(rl);
+    const cli = new CLIManager(rl);
     const wm = new WeatherManager(cli);
     await wm.getWeather(process.argv);
 }

@@ -1,6 +1,19 @@
 
+/**
+ * A class for managing CLI prompts, messages and actions
+ * Wraps around ReadLine
+ *
+ * @exports
+ * @class CLIManager
+ */
 exports.CLI = class CLI {
 
+    /**
+     * Creates an instance of CLIManager.
+     *
+     * @param {ReadLine} rl ReadLine Interface
+     * @memberof CLIManager
+     */
     constructor(
         rl
     ) {
@@ -12,19 +25,44 @@ exports.CLI = class CLI {
         });
     }
 
+    /**
+     * Ends the ReadLine Interface
+     *
+     * @memberof CLIManager
+     */
     end() {
         this.rl.close();
     }
 
+    /**
+     * Writes a message to the ReadLine Interface output
+     *
+     * @param {string} message
+     * @memberof CLIManager
+     */
     writeMessage(message) {
         this.rl.write(`${message}\n`);
     }
 
+    /**
+     * Sends an error message towards the ReadLine Interace output
+     * and ends the ReadLine Interface
+     *
+     * @param {string} message
+     * @memberof CLIManager
+     */
     sendError(message) {
         this.writeMessage(message);
         this.end();
     }
 
+    /**
+     * Adds a prompt object to the prompt queue
+     * if there is no prompt running it will start it
+     *
+     * @param {Object} prompt
+     * @memberof CLIManager
+     */
     queuePrompt(prompt) {
         this.queue.push(prompt);
         if (!this.inQueue) {
@@ -32,6 +70,12 @@ exports.CLI = class CLI {
         }
     }
 
+    /**
+     * Contains logic for prompting the user in a sequence, from the prompt queue.
+     * Depending on the prompt, it will trigger an action as well.
+     *
+     * @memberof CLIManager
+     */
     prompt() {
         const obj = this.queue.shift();
         if (!obj) {

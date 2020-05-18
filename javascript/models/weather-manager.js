@@ -8,14 +8,34 @@ const { OpenWeather } = require('../integration/open-weather');
 const MAXIMUM_CITIES_PER_IMPORT_FILE = 10;
 const CONFIG_DIR = `${os.homedir()}/.open-weather-cli-config`;
 
+/**
+ *  Contains logic for managing the user input, prompting the user and sending messages
+ *
+ * @exports
+ * @class WeatherManager
+ */
 exports.WeatherManager = class WeatherManager {
 
+    /**
+     * Creates an instance of WeatherManager.
+     *
+     * @param {CLIManager} cli
+     * @memberof WeatherManager
+     */
     constructor(cli) {
         this.cli = cli;
         this.openWeather = new OpenWeather();
         this.ipApi = new IPApi();
     }
 
+    /**
+     * Serializes query data, from command arguments to an Options object
+     * Making it easier to store last query data
+     *
+     * @param {string[]} commandArguments
+     * @returns {Object}
+     * @memberof WeatherManager
+     */
     serializeOptions(commandArguments) {
         const options = {
             t: commandArguments.includes('-t') ? this.extractFlagValue(commandArguments, '-t') : 'c'
@@ -28,16 +48,35 @@ exports.WeatherManager = class WeatherManager {
         }
     }
 
+    /**
+     * Deserializes query data, from an Options object to command arguments
+     *
+     * @param {Object} options
+     * @returns {string[]}
+     * @memberof WeatherManager
+     */
     deserializeOptions(options) {
         return Object.keys(options)
             .reduce((acc, key) => [...acc, `-${key}`, options[key]], []);
     }
 
+    /**
+     * Stores the latest query into the config file
+     *
+     * @param {string[]} commandArguments
+     * @memberof WeatherManager
+     */
     saveLatestQuery(commandArguments) {
         const options = this.serializeOptions(commandArguments);
         fs.writeFileSync(CONFIG_DIR, JSON.stringify(options));
     }
 
+    /**
+     * Returns the latest query from the config file
+     *
+     * @returns {string[]}
+     * @memberof WeatherManager
+     */
     getLatestQuery() {
         try {
             const options = JSON.parse(fs.readFileSync(CONFIG_DIR).toString());
@@ -50,6 +89,14 @@ exports.WeatherManager = class WeatherManager {
         }
     }
 
+    /**
+     * Extracts data for a flag from command arguments
+     *
+     * @param {string[]} commandArguments
+     * @param {string} flag
+     * @returns {string}
+     * @memberof WeatherManager
+     */
     extractFlagValue(commandArguments, flag) {
         const flagPosition = commandArguments.indexOf(flag);
         const flagValue = commandArguments[flagPosition + 1];
@@ -59,6 +106,13 @@ exports.WeatherManager = class WeatherManager {
         return flagValue;
     }
 
+    /**
+     * If any of supported flags match, it will execute a certain action and return a proper message
+     *
+     * @param {string[]} commandArguments
+     * @returns {Promise<string | undefined>}
+     * @memberof WeatherManager
+     */
     async getWeatherMessage(commandArguments) {
         const temperature = this.getTemperature(commandArguments);
         switch (true) {
@@ -82,6 +136,13 @@ exports.WeatherManager = class WeatherManager {
         }
     }
 
+    /**
+     * Returns a temperature unit from command argruments
+     *
+     * @param {string[]} commandArguments
+     * @returns {"metric"|"imperial"}
+     * @memberof WeatherManager
+     */
     getTemperature(commandArguments) {
         if (!commandArguments.includes('-t')) {
             return 'metric';
@@ -96,12 +157,29 @@ exports.WeatherManager = class WeatherManager {
         return unCheckedTemperature === 'c' ? 'metric' : 'imperial';
     }
 
+    /**
+     * Returns a weather message from the last query
+     *
+     * @private
+     * @returns {Promise<string>}
+     * @memberof WeatherManager
+     */
     async getWeatherForLatestQuery() {
         const command = this.getLatestQuery();
         const message = await this.getWeatherMessage(command);
         return message;
     }
 
+    /**
+     * Given a file location, it will return a weather report for each city name in the file
+     * Maximum of 10 cities per imported file
+     * The temperature is returned in metric units
+     *
+     * @private
+     * @param {string} fileLocation
+     * @returns {Promise<string>}
+     * @memberof WeatherManager
+     */
     async getWeatherFromImportFile(fileLocation) {
         const pwd = process.env.PWD;
         const filePath = fileLocation.startsWith('/') ? fileLocation : path.resolve(pwd, fileLocation);
@@ -123,6 +201,12 @@ exports.WeatherManager = class WeatherManager {
         }
     }
 
+    /**
+     * Contains logic for mapping the user input to the proper action
+     *
+     * @param {string[]} commandArguments
+     * @memberof WeatherManager
+     */
     async getWeather(commandArguments) {
         try {
             const weather = await this.getWeatherMessage(commandArguments);
@@ -155,6 +239,12 @@ exports.WeatherManager = class WeatherManager {
         }
     }
 
+    /**
+     * Prompts the user for the zipcode, returns a weather report message to the user
+     *
+     * @private
+     * @memberof WeatherManager
+     */
     promptZipCode() {
         this.cli.queuePrompt({
             question: 'What\'s the zipcode?',
@@ -162,6 +252,13 @@ exports.WeatherManager = class WeatherManager {
         });
     }
 
+    /**
+     * Prompts the user for which location to fetch a weather report, with a suggestion from geolocation
+     * Sends a weather report for the location specified to the user
+     *
+     * @private
+     * @memberof WeatherManager
+     */
     async promptGeoLocation() {
         const city = await this.ipApi.getCity();
         this.cli.queuePrompt({

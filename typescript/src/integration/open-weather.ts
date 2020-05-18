@@ -14,7 +14,7 @@ interface CityListEntry {
     };
 }
 
-interface WeatherMessage {
+interface WeatherMetadata {
     city: string;
     temp: number;
     humidity: number;
@@ -23,11 +23,40 @@ interface WeatherMessage {
 
 export type TemperatureUnit = "metric" | "imperial";
 
+/**
+ * Class for integrating with Open Weather
+ * https://openweathermap.org/
+ *
+ * @export
+ * @class OpenWeather
+ */
 export class OpenWeather {
+
+    /**
+     * Open Weather api endpoint
+     *
+     * @private
+     * @memberof OpenWeather
+     */
     private readonly baseUrl = "https://api.openweathermap.org/data/2.5";
+
+    /**
+     * Application Id for authenticating with Open Weather
+     *
+     * @private
+     * @memberof OpenWeather
+     */
     private readonly appId = "84c646a7cac391335fc2615712ec3e40";
+
     private cityList: CityListEntry[];
 
+    /**
+     * Returns a City List with containing each city in Open Weather database with their metadata
+     *
+     * @private
+     * @returns {CityListEntry[]}
+     * @memberof OpenWeather
+     */
     private getCityList(): CityListEntry[] {
         if (!this.cityList) {
             const filePath = path.resolve(`${__dirname}/../../city-list.json`);
@@ -36,7 +65,15 @@ export class OpenWeather {
         return this.cityList;
     }
 
-    private weatherMessage({ city, temp, humidity, weather }: WeatherMessage) {
+    /**
+     * Creates a standardized "Weather Message"
+     *
+     * @private
+     * @param {WeatherMetadata} { city, temp, humidity, weather }
+     * @returns {string}
+     * @memberof OpenWeather
+     */
+    private weatherMessage({ city, temp, humidity, weather }: WeatherMetadata) {
         return formattedMessage(
             `City: ${city}`,
             `Temperature is: ${temp}`,
@@ -45,6 +82,14 @@ export class OpenWeather {
         );
     }
 
+    /**
+     * Returns current weather for multiple cities by city names
+     *
+     * @param {string[]} cityNames
+     * @param {TemperatureUnit} temperatureUnit
+     * @returns {Promise<string>}
+     * @memberof OpenWeather
+     */
     async getCurrentWeatherMultipleCities(cityNames: string[], temperatureUnit: TemperatureUnit): Promise<string> {
         const cityIds = cityNames.map(cityName => {
             const city = this.getCityList().find(cl => cl.name.toLowerCase() === cityName.toLowerCase());
@@ -82,6 +127,14 @@ export class OpenWeather {
         }
     }
 
+    /**
+     * Returns current weather by city name
+     *
+     * @param {string} cityName
+     * @param {TemperatureUnit} temperatureUnit
+     * @returns {Promise<string>}
+     * @memberof OpenWeather
+     */
     async getCurrentWeatherByCity(cityName: string, temperatureUnit: TemperatureUnit): Promise<string> {
         const qs = [
             `q=${encodeURIComponent(cityName)}`,
@@ -111,6 +164,14 @@ export class OpenWeather {
         }
     }
 
+    /**
+     * Returns current weather by zip code
+     *
+     * @param {string} zipCode
+     * @param {TemperatureUnit} temperatureUnit
+     * @returns {Promise<string>}
+     * @memberof OpenWeather
+     */
     async getCurrentWeatherByZipCode(zipCode: string, temperatureUnit: TemperatureUnit): Promise<string> {
         const qs = [
             `zip=${encodeURIComponent(zipCode)}`,
@@ -137,8 +198,17 @@ export class OpenWeather {
     }
 }
 
+/**
+ * Namespace of all OpenWeather API responses
+ */
 namespace OpenWeather {
 
+    /**
+     * Response Body from GET Current Weather Request
+     *
+     * @export
+     * @interface CurrentWeatherResponse
+     */
     export interface CurrentWeatherResponse {
         base: string;
         visibility: number;
@@ -181,6 +251,12 @@ namespace OpenWeather {
         };
     }
 
+    /**
+     * Response Body from GET Group Weather Request
+     *
+     * @export
+     * @interface GroupWeatherResponse
+     */
     export interface GroupWeatherResponse {
         cnt: number;
         list: {
@@ -223,6 +299,12 @@ namespace OpenWeather {
         }[];
     }
 
+    /**
+     * Response Body from GET Find Weather Request
+     *
+     * @export
+     * @interface FindWeatherResponse
+     */
     export interface FindWeatherResponse {
         message: string;
         cod: string;
