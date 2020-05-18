@@ -1,7 +1,10 @@
 {
     "name": "open-weather-cli",
     "version": "1.0.0",
-    "description": "",
+    "description": "CLI Tool for getting weather data",
+    "bin": {
+        "openweather": "./bin/open-weather-cli"
+    },
     "main": "dst/index.js",
     "scripts": {
         "start": "./bin/open-weather-cli",
@@ -12,7 +15,7 @@
         "lint": "npm run tslint",
         "tslint": "./node_modules/.bin/tslint -p ./tsconfig.json -c ./tslint.json"
     },
-    "author": "",
+    "author": "andrejsarafimovski@gmail.com",
     "license": "ISC",
     "devDependencies": {
         "@types/node": "^10.15.x",

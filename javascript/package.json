@@ -1,7 +1,10 @@
 {
     "name": "open-weather-cli",
     "version": "1.0.0",
-    "description": "",
+    "description": "CLI Tool for getting weather data",
+    "bin": {
+        "openweather": "./bin/open-weather-cli"
+    },
     "main": "dst/index.js",
     "scripts": {
         "start": "./bin/open-weather-cli",
@@ -9,7 +12,7 @@
         "lint": "npm run eslint",
         "eslint": "./node_modules/.bin/eslint .  --ext .js --quiet --cache"
     },
-    "author": "",
+    "author": "andrejsarafimovski@gmail.com",
     "license": "ISC",
     "devDependencies": {
         "babel-eslint": "^10.1.0",
