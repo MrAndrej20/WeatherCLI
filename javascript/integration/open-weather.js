@@ -19,7 +19,7 @@ exports.OpenWeather = class OpenWeather {
      */
     constructor() {
         this.baseUrl = 'https://api.openweathermap.org/data/2.5';
-        this.appId = '84c646a7cac391335fc2615712ec3e40';
+        this.appId = '';
 
     }
 

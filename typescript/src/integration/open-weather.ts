@@ -46,7 +46,7 @@ export class OpenWeather {
      * @private
      * @memberof OpenWeather
      */
-    private readonly appId = "84c646a7cac391335fc2615712ec3e40";
+    private readonly appId = "";
 
     private cityList: CityListEntry[];
 
